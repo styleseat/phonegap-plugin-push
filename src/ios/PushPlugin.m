@@ -530,6 +530,19 @@
     }
 }
 
+- (void)hasSetPermission:(CDVInvokedUrlCommand *)command
+{
+    id<UIApplicationDelegate> appDelegate = [UIApplication sharedApplication].delegate;
+    if ([appDelegate respondsToSelector:@selector(checkUserHasSetRemoteNotificationsStatusWithCompletionHandler:)]) {
+        [appDelegate performSelector:@selector(checkUserHasSetRemoteNotificationsStatusWithCompletionHandler:) withObject:^(BOOL hasSetPermission) {
+            NSMutableDictionary* message = [NSMutableDictionary dictionaryWithCapacity:1];
+            [message setObject:[NSNumber numberWithBool:hasSetPermission] forKey:@"hasSetPermission"];
+            CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:message];
+            [self.commandDelegate sendPluginResult:commandResult callbackId:command.callbackId];
+        }];
+    }
+}
+
 -(void)successWithMessage:(NSString *)myCallbackId withMsg:(NSString *)message
 {
     if (myCallbackId != nil)

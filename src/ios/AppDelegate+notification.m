@@ -151,6 +151,23 @@ NSString *const pushPluginApplicationDidBecomeActiveNotification = @"pushPluginA
     }];
 }
 
+- (void)checkUserHasSetRemoteNotificationsStatusWithCompletionHandler:(nonnull void (^)(BOOL))completionHandler
+{
+    [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
+
+        switch (settings.authorizationStatus)
+        {
+            case UNAuthorizationStatusNotDetermined:
+                completionHandler(NO);
+                break;
+            case UNAuthorizationStatusAuthorized:
+            case UNAuthorizationStatusDenied:
+                completionHandler(YES);
+                break;
+        }
+    }];
+}
+
 - (void)pushPluginOnApplicationDidBecomeActive:(NSNotification *)notification {
 
     NSLog(@"active");
