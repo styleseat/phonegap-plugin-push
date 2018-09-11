@@ -134,20 +134,26 @@ NSString *const pushPluginApplicationDidBecomeActiveNotification = @"pushPluginA
     }
 }
 
-- (void)checkUserHasRemoteNotificationsEnabledWithCompletionHandler:(nonnull void (^)(BOOL))completionHandler
+- (void)checkUserHasRemoteNotificationsEnabledWithCompletionHandler:(nonnull void (^)(NSMutableDictionary))completionHandler
 {
     [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
+        NSMutableDictionary* message = [NSMutableDictionary dictionaryWithCapacity:2];
+        [message setObject:[NSNumber numberWithBool:isEnabled] forKey:@"isEnabled"];
+        // [message setObject:[NSNumber numberWithBool:hasSetPermission] forKey:@"hasSetPermission"];
 
         switch (settings.authorizationStatus)
         {
             case UNAuthorizationStatusDenied:
             case UNAuthorizationStatusNotDetermined:
-                completionHandler(NO);
+                [message setObject:[NSNumber numberWithBool:NO] forKey:@"isEnabled"];
+                // completionHandler(NO);
                 break;
             case UNAuthorizationStatusAuthorized:
-                completionHandler(YES);
+                [message setObject:[NSNumber numberWithBool:YES] forKey:@"isEnabled"];
+                // completionHandler(YES);
                 break;
         }
+        completionHandler(message)
     }];
 }
 
