@@ -134,43 +134,26 @@ NSString *const pushPluginApplicationDidBecomeActiveNotification = @"pushPluginA
     }
 }
 
-- (void)checkUserHasRemoteNotificationsEnabledWithCompletionHandler:(nonnull void (^)(NSMutableDictionary))completionHandler
+- (void)checkUserHasRemoteNotificationsEnabledWithCompletionHandler:(nonnull void (^)(NSMutableDictionary*))completionHandler
 {
     [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
         NSMutableDictionary* message = [NSMutableDictionary dictionaryWithCapacity:2];
-        [message setObject:[NSNumber numberWithBool:isEnabled] forKey:@"isEnabled"];
-        // [message setObject:[NSNumber numberWithBool:hasSetPermission] forKey:@"hasSetPermission"];
-
         switch (settings.authorizationStatus)
         {
             case UNAuthorizationStatusDenied:
+                [message setObject:[NSNumber numberWithBool:NO] forKey:@"isEnabled"];
+                [message setObject:[NSNumber numberWithBool:YES] forKey:@"hasSetPermission"];
+                break;
             case UNAuthorizationStatusNotDetermined:
                 [message setObject:[NSNumber numberWithBool:NO] forKey:@"isEnabled"];
-                // completionHandler(NO);
+                [message setObject:[NSNumber numberWithBool:NO] forKey:@"hasSetPermission"];
                 break;
             case UNAuthorizationStatusAuthorized:
                 [message setObject:[NSNumber numberWithBool:YES] forKey:@"isEnabled"];
-                // completionHandler(YES);
+                [message setObject:[NSNumber numberWithBool:YES] forKey:@"hasSetPermission"];
                 break;
         }
-        completionHandler(message)
-    }];
-}
-
-- (void)checkUserHasSetRemoteNotificationsStatusWithCompletionHandler:(nonnull void (^)(BOOL))completionHandler
-{
-    [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
-
-        switch (settings.authorizationStatus)
-        {
-            case UNAuthorizationStatusNotDetermined:
-                completionHandler(NO);
-                break;
-            case UNAuthorizationStatusAuthorized:
-            case UNAuthorizationStatusDenied:
-                completionHandler(YES);
-                break;
-        }
+        completionHandler(message);
     }];
 }
 

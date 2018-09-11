@@ -521,30 +521,9 @@
 {
     id<UIApplicationDelegate> appDelegate = [UIApplication sharedApplication].delegate;
     if ([appDelegate respondsToSelector:@selector(checkUserHasRemoteNotificationsEnabledWithCompletionHandler:)]) {
-        [appDelegate performSelector:@selector(checkUserHasRemoteNotificationsEnabledWithCompletionHandler:) withObject:^(NSMutableDictionary message) {
-            // NSMutableDictionary* message = [NSMutableDictionary dictionaryWithCapacity:2];
-            // [message setObject:[NSNumber numberWithBool:isEnabled] forKey:@"isEnabled"];
-        // [appDelegate performSelector:@selector(checkUserHasSetRemoteNotificationsStatusWithCompletionHandler:) withObject:^(BOOL hasSetPermission) {
-            // [message setObject:[NSNumber numberWithBool:hasSetPermission] forKey:@"hasSetPermission"];
+        [appDelegate performSelector:@selector(checkUserHasRemoteNotificationsEnabledWithCompletionHandler:) withObject:^(NSMutableDictionary* message) {
             CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:message];
             [self.commandDelegate sendPluginResult:commandResult callbackId:command.callbackId];
-        // }];
-        }];
-    }
-}
-
-- (void)hasSetPermission:(CDVInvokedUrlCommand *)command
-{
-    NSLog(@"calling has set permission");
-    id<UIApplicationDelegate> appDelegate = [UIApplication sharedApplication].delegate;
-    if ([appDelegate respondsToSelector:@selector(checkUserHasSetRemoteNotificationsStatusWithCompletionHandler:)]) {
-        [appDelegate performSelector:@selector(checkUserHasSetRemoteNotificationsStatusWithCompletionHandler:) withObject:^(BOOL hasSetPermission) {
-            NSLog(@"inside the conditional");
-            NSMutableDictionary* message = [NSMutableDictionary dictionaryWithCapacity:1];
-            [message setObject:[NSNumber numberWithBool:hasSetPermission] forKey:@"hasSetPermission"];
-            CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:message];
-            [self.commandDelegate sendPluginResult:commandResult callbackId:command.callbackId];
-            NSLog(@"made it to the bottom");
         }];
     }
 }
