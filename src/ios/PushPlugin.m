@@ -521,18 +521,18 @@
 {
     id<UIApplicationDelegate> appDelegate = [UIApplication sharedApplication].delegate;
     if ([appDelegate respondsToSelector:@selector(checkUserHasRemoteNotificationsEnabledWithCompletionHandler:)]) {
-        NSMutableDictionary* message = [NSMutableDictionary dictionaryWithCapacity:2];
         [appDelegate performSelector:@selector(checkUserHasRemoteNotificationsEnabledWithCompletionHandler:) withObject:^(BOOL isEnabled) {
+            NSMutableDictionary* message = [NSMutableDictionary dictionaryWithCapacity:2];
             [message setObject:[NSNumber numberWithBool:isEnabled] forKey:@"isEnabled"];
+
+            [appDelegate performSelector:@selector(checkUserHasSetRemoteNotificationsStatusWithCompletionHandler:) withObject:^(BOOL hasSetPermission) {
+                NSLog(@"inside has set permission handler");
+                [message setObject:[NSNumber numberWithBool:hasSetPermission] forKey:@"hasSetPermission"];
+                NSLog(@"set the object");
+                CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:message];
+                [self.commandDelegate sendPluginResult:commandResult callbackId:command.callbackId];
+            }];
         }];
-        [appDelegate performSelector:@selector(checkUserHasSetRemoteNotificationsStatusWithCompletionHandler:) withObject:^(BOOL hasSetPermission) {
-            NSLog(@"inside has set permission handler");
-            [message setObject:[NSNumber numberWithBool:hasSetPermission] forKey:@"hasSetPermission"];
-            NSLog(@"set the object");
-        }];
-        NSLog(@"sending response");
-        CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:message];
-        [self.commandDelegate sendPluginResult:commandResult callbackId:command.callbackId];
     }
 }
 
